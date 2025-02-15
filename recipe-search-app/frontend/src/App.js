@@ -9,7 +9,6 @@ function App() {
   useEffect(() => {
     axios.get("http://localhost:5000/scrape")
       .then((response) => {
-        // Ensure the response data is an object
         if (response.data && typeof response.data === "object") {
           setRecipe(response.data);
         } else {
@@ -34,15 +33,25 @@ function App() {
           <a href={recipe.link} target="_blank" rel="noopener noreferrer">
             View Recipe
           </a>
+          
+          {/* Ingredients Section */}
           <h3>Ingredients:</h3>
           <ul>
             {recipe.ingredients.map((ingredient, index) => (
               <li key={index}>{ingredient}</li>
             ))}
           </ul>
+
+          {/* Directions Section */}
+          <h3>Directions:</h3>
+          <ol>
+            {recipe.directions.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
         </div>
       ) : (
-        <p>No recipe found.</p>
+        <p>Loading recipe...</p>
       )}
     </div>
   );

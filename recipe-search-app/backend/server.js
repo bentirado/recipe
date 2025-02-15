@@ -1,80 +1,108 @@
 const express = require("express");
-const { Builder, By } = require("selenium-webdriver");
+const { Builder, By, until } = require("selenium-webdriver");
 const firefox = require("selenium-webdriver/firefox");
 const cors = require("cors");
 
 const app = express();
 const port = 5000;
 
-// Enable CORS for all routes
 app.use(cors());
 
-// Root route
 app.get("/", (req, res) => {
   res.send("Welcome to the Recipe Search Backend!");
 });
 
-// Define a route to scrape recipes
 app.get("/scrape", async (req, res) => {
+  let driver;
   try {
-    // Set up Selenium WebDriver for Firefox
     const options = new firefox.Options();
-    options.addArguments("--headless"); // Set headless mode
-    options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
-    const driver = await new Builder()
+    options.addArguments("--headless");
+    options.addArguments(
+      "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    );
+
+    driver = await new Builder()
       .forBrowser("firefox")
       .setFirefoxOptions(options)
       .build();
 
-    // Scrape data
-    console.log("Navigating to: https://www.allrecipes.com/ploughman-s-sandwich-recipe-8737059");
-    await driver.get("https://www.allrecipes.com/ploughman-s-sandwich-recipe-8737059");
-    await driver.sleep(10000); // Wait 10 seconds for the page to load
+    const url = "https://www.allrecipes.com/recipe/265338/birria-de-res-tacos-beef-birria-tacos/";
+    console.log("Navigating to:", url);
+    await driver.get(url);
 
-    // Log the page title and HTML for debugging
-    const pageTitle = await driver.getTitle();
-    console.log("Page title:", pageTitle);
-    const pageSource = await driver.getPageSource();
-    console.log("Page HTML:", pageSource);
+    // Wait for page title to confirm it's loaded
+    //await driver.wait(until.titleContains("Ploughman"), 10000);
 
-    // Scrape the recipe title
-    const titleElement = await driver.findElement(By.css("h1.article-heading.text-headline-400"));
-    const title = await titleElement.getText();
-
-    // Scrape the recipe link (current page URL)
+    // Scrape title
+    const title = await driver.findElement(By.css("h1.article-heading.text-headline-400")).getText();
     const link = await driver.getCurrentUrl();
 
-        // Scrape the author
-        const authorElement = await driver.findElement(By.css("a.mntl-attribution__item-name"));
-        const author = await authorElement.getText();
+    // Scrape author
+    let author = "Unknown";
+    try {
+      author = await driver.findElement(By.css("a.mntl-attribution__item-name")).getText();
+    } catch (err) {
+      console.warn("Author not found.");
+    }
 
-    // Scrape ingredients
-    const ingredients = await driver.findElements(By.css("li.mm-recipes-structured-ingredients_list-item"));
+    // **Extract Ingredients**
+    await driver.wait(until.elementLocated(By.css("ul.mm-recipes-structured-ingredients__list")), 10000);
+    const ingredients = await driver.findElements(By.css("ul.mm-recipes-structured-ingredients__list li"));
     const ingredientList = [];
+
     for (const ingredient of ingredients) {
-      const quantityElement = await ingredient.findElement(By.css("span[data-ingredient-quantity='true']")).getText();
-      const unitElement = await ingredient.findElement(By.css("span[data-ingredient-unit='true']")).getText();
-      const nameElement = await ingredient.findElement(By.css("span[data-ingredient-name='true']")).getText();
-      const ingredientText = `${quantityElement} ${unitElement} ${nameElement}`;
-      ingredientList.push(ingredientText);
+      try {
+        const paragraphElement = await ingredient.findElement(By.css("p"));
+
+        const quantityElement = await paragraphElement.findElements(By.css("span[data-ingredient-quantity='true']"));
+        const unitElement = await paragraphElement.findElements(By.css("span[data-ingredient-unit='true']"));
+        const nameElement = await paragraphElement.findElements(By.css("span[data-ingredient-name='true']"));
+
+        const quantity = quantityElement.length > 0 ? await quantityElement[0].getText() : "";
+        const unit = unitElement.length > 0 ? await unitElement[0].getText() : "";
+        const name = nameElement.length > 0 ? await nameElement[0].getText() : "";
+
+        if (name) {
+          ingredientList.push(`${quantity} ${unit} ${name}`.trim());
+        }
+      } catch (err) {
+        console.warn("Skipping an ingredient due to missing data.");
+      }
+    }
+
+    // **Extract Directions**
+    await driver.wait(until.elementLocated(By.css("ol.comp.mntl-sc-block.mntl-sc-block-startgroup.mntl-sc-block-group--OL")), 10000);
+    const steps = await driver.findElements(By.css("ol.comp.mntl-sc-block.mntl-sc-block-startgroup.mntl-sc-block-group--OL li"));
+
+    const directions = [];
+    for (const step of steps) {
+      try {
+        const paragraphElement = await step.findElement(By.css("p"));
+        const stepText = await paragraphElement.getText();
+        directions.push(stepText);
+      } catch (err) {
+        console.warn("Skipping a step due to missing text.");
+      }
     }
 
     await driver.quit();
 
-    // Send the scraped data as JSON
     res.json({
       title,
       link,
       ingredients: ingredientList,
-      author
+      directions,
+      author,
     });
   } catch (error) {
     console.error("Error scraping data:", error);
+    if (driver) {
+      await driver.quit();
+    }
     res.status(500).send("Error scraping data");
   }
 });
 
-// Start the server
 app.listen(port, () => {
   console.log(`Backend server running on http://localhost:${port}`);
 });
