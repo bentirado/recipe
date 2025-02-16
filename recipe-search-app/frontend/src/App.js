@@ -11,8 +11,6 @@ function App() {
   const [crave, setCrave] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null); 
-  const [savedRecipes, setSavedRecipes] = useState([]);
-  const [showSavedRecipes, setShowSavedRecipes] = useState(false); // To show/hide the popup
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -62,33 +60,19 @@ function App() {
       });
   };
 
-  const handleSaveRecipe = () => {
-    if (recipe) {
-      setSavedRecipes([...savedRecipes, recipe]);
-    }
-  };
-
-  const handleShowSavedRecipes = () => {
-    setShowSavedRecipes(true); // Show the saved recipes popup
-  };
-
-  const handleCloseSavedRecipes = () => {
-    setShowSavedRecipes(false); // Hide the saved recipes popup
-  };
-
   return (
     <div className="App">
       <div className="header">
-        <img src="/assets/chef-icon.svg" alt="Chef Icon" width="40" />
+        <img src="/assets/chef-icon.svg" alt="Chef Icon" width="45" />
         <h1>Abuelita</h1>
+        {/*}
         {user ? (
           <div className="auth-buttons">
-            <button className="button" onClick={handleShowSavedRecipes}>Saved Recipes</button>
-            <button className="logoutButton" onClick={handleLogout}>Logout</button>
+            <button className="button" onClick={handleLogout}>Logout</button>
           </div>
         ) : (
-          <button className="loginButton" onClick={handleGoogleLogin}>Login with Google</button>
-        )}
+          <button className="button" onClick={handleGoogleLogin}>Login with Google</button>
+        )}*/}
       </div>
 
       <p className="tagline">Let grandmother's wisdom guide your cooking!</p>
@@ -99,7 +83,7 @@ function App() {
           className="ingredientBox"
           rows="5"
           cols="40"
-          placeholder="What ingredients do you have?"
+          placeholder="e.g., chicken, rice, tomatoes..."
           value={foods}
           onChange={(e) => setFoods(e.target.value)}
         />
@@ -108,21 +92,14 @@ function App() {
           className="dishBox"
           rows="5"
           cols="40"
-          placeholder="What would you like to make?"
+          placeholder="e.g., something warm and comforting"
           value={crave}
           onChange={(e) => setCrave(e.target.value)}
         />
       </div>
 
       <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleCookClick}>
-        {loading ? (
-          <>
-            Cooking!
-            <img src="/assets/loading.png" alt="Loading" width="20" />
-          </>
-        ) : (
-          "Cook!"
-        )}
+        {loading ? "Cooking!" : "Cook!"}
       </div>
 
       {recipe && (
@@ -150,34 +127,11 @@ function App() {
                 <li key={index}>{step}</li>
               ))}
             </ol>
-            <button onClick={handleSaveRecipe} className="button">Save Recipe</button>
           </div>
         </div>
       )}
 
       {error && <p style={{ color: "red" }}>{"Lo siento mijo, but I don't have any recipes for that. Can you try giving me some more details?"}</p>}
-
-      {/* Saved Recipes Popup */}
-      {showSavedRecipes && user && (
-        <div className="popup">
-          <div className="popupContent">
-            <h2>Saved Recipes</h2>
-            <p>User ID: {user.uid}</p> {/* Display the user ID */}
-            {savedRecipes.length === 0 ? (
-              <p>No saved recipes yet.</p>
-            ) : (
-              savedRecipes.map((saved, index) => (
-                <div key={index} className="savedRecipeCard">
-                  <h3>{saved.title}</h3>
-                  <a href={saved.link} target="_blank" rel="noopener noreferrer">View Recipe</a>
-                </div>
-              ))
-            )}
-            <button onClick={handleCloseSavedRecipes} className="closeButton">Close</button>
-          </div>
-        </div>
-      )}
-      <p>Made by Benjamin Tirado and Javid Pena for Hacklahoma '25</p>
     </div>
   );
 }
