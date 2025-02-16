@@ -85,16 +85,26 @@ app.post("/scrape", async (req, res) => {
       });
     }
     
-    // --- NEW LOGIC: If the first recipe's title contains "guide" (case insensitive), choose the second recipe ---
-    let selectedRecipeLinkElement = recipeLinks[0];
-    if (recipeLinks.length > 1) {
-      const firstCardText = await recipeLinks[0].getText();
-      if (firstCardText.toLowerCase().includes("guide")) {
-        console.log("First recipe contains 'guide'. Selecting the second recipe instead.");
-        selectedRecipeLinkElement = recipeLinks[1];
+    let j = 0; // Initialize j
+
+    for (let i = 0; i < recipeLinks.length; i++) {
+      const recipeUrl = await recipeLinks[i].getAttribute("href"); // Use 'i' to loop through all links
+      if (
+        recipeUrl.toLowerCase().includes("great") ||
+        recipeUrl.toLowerCase().includes("best-of") ||
+        recipeUrl.toLowerCase().includes("guide")
+      ) {
+        console.log("This link contains one of the keywords (great, best-of, guide):", recipeUrl);
+        j = 2; // Increment j when any of the keywords are found
       }
     }
     
+    
+    console.log("Final value of j:", j);
+    
+   
+    // Proceed with scraping the first valid recipe (just for simplicity here)
+    const selectedRecipeLinkElement = recipeLinks[j];
     const recipeUrl = await selectedRecipeLinkElement.getAttribute("href");
     console.log("Selected recipe URL:", recipeUrl);
     
