@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import './App.css';
-import firebase from './firebase';  // Import Firebase initialization
+import { auth, googleProvider } from "./firebase";
+import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
+import { Link } from "react-router-dom"; // Ensure React Router is set up
 
 function App() {
   const [recipe, setRecipe] = useState(null);
@@ -9,11 +11,37 @@ function App() {
   const [foods, setFoods] = useState("");
   const [crave, setCrave] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null); // Track authentication state
 
-  
+  // Listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log("Logged in as:", result.user.displayName);
+    } catch (error) {
+      console.error("Login error:", error.message);
+      alert("Error logging in. Please try again.");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User logged out");
+    } catch (error) {
+      console.error("Logout error:", error.message);
+    }
+  };
 
   const handleCookClick = () => {
-    if (loading) return; // Prevent multiple clicks
+    if (loading) return;
     setError(null);
     setRecipe(null);
     setLoading(true);
@@ -36,11 +64,10 @@ function App() {
   };
 
   const handleNewRecipeClick = () => {
-    if (loading || !recipe) return; // Prevent multiple clicks
+    if (loading || !recipe) return;
     setError(null);
     setLoading(true);
 
-    // Pass the current recipe title as lastDish to ask for a different dish
     axios.post("http://localhost:5000/scrape", { foods, crave, lastDish: recipe.title })
       .then((response) => {
         if (response.data && typeof response.data === "object") {
@@ -63,7 +90,17 @@ function App() {
       <div className="header">
         <img src="/assets/chef-icon.svg" alt="Chef Icon" width="40" />
         <h1>Abuelita</h1>
+        {/* Auth Button Logic */}
+        {user ? (
+          <div className="auth-buttons">
+            <Link to="/saved-recipes" className="button">Saved Recipes</Link>
+            <button className="logoutButton" onClick={handleLogout}>Logout</button>
+          </div>
+        ) : (
+          <button className="loginButton" onClick={handleGoogleLogin}>Login with Google</button>
+        )}
       </div>
+
       <p className="tagline">Let grandmother's wisdom guide your cooking!</p>
       
       <div className="inputBox">
