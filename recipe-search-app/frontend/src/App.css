@@ -1,5 +1,5 @@
 * {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .App {
@@ -139,17 +139,15 @@ h2, h3 {
 }
 
 p, li {
-  font-family: 'Inter', sans-serif; /* Updated to use the Inter font for paragraphs and list items */
-  color: #9A3C1A; /* Retaining existing color for paragraphs and list items */
+  font-family: 'Inter', sans-serif;
+  color: #9A3C1A;
   font-weight: 500;
 }
 
 a {
-  font-family: 'Inter', sans-serif;
   color: #F97316;
 }
 
-/* Popup */
 .popup {
   position: fixed;
   top: 0;
@@ -188,45 +186,40 @@ a {
   border-radius: 5px;
 }
 
-/* Add this to your App.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap');
 
 .ingredient-item {
-  font-family: 'Inter', sans-serif; /* Updated to use the Inter font */
-  list-style-type: none; /* Remove default bullets */
-  position: relative; /* Positioning for custom bullet */
-  margin-bottom: 10px; /* Add space between ingredients */
+  list-style-type: none;
+  position: relative; 
+  margin-bottom: 10px;
 }
 
 .ingredient-item::before {
-  content: "•"; /* Custom bullet */
-  color: #FFA500; /* Soft orange color */
-  position: absolute; /* Positioning */
-  left: -1em; /* Adjust as needed */
-  font-size: 1.5em; /* Increase bullet size */
+  content: "•"; 
+  color: #FFA500;
+  position: absolute;
+  left: -1em;
+  font-size: 1.5em;
 }
 
 .direction-item {
-  font-family: 'Inter', sans-serif; /* Updated to use the Inter font */
   position: relative;
-  padding-left: 30px; /* Adjust padding to make space for the circle */
+  padding-left: 30px; 
   padding-right:20px;
-  margin-bottom: 10px; /* Add padding between items */
+  margin-bottom: 10px;
 }
 
 .direction-item::marker {
-  color: #d69620; /* Change this to your desired color */
+  color: #d69620;
 }
 
 .author-text {
-  font-family: 'Inter', sans-serif; /* Updated to use the Inter font */
   color: #c24921; 
 }
 
-/* Add this to your App.css */
 .pastel-orange {
-    background-color: #ffcc99; /* Pastel orange color */
-    color: #783d21; /* Slightly lighter than the header color */
+    background-color: #ffcc99;
+    color: #783d21;
 } 
 
