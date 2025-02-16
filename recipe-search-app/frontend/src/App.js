@@ -11,7 +11,6 @@ function App() {
   useEffect(() => {
     axios.get("http://localhost:5000/scrape")
       .then((response) => {
-        // Ensure the response data is an object
         if (response.data && typeof response.data === "object") {
           setRecipe(response.data);
         } else {
