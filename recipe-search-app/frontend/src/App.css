@@ -70,6 +70,21 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.button img {
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-left: 10px;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .button:hover {
   background-color: #d68a3c;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);

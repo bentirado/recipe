@@ -122,7 +122,14 @@ function App() {
 
       <div className="button-container" style={{ display: 'flex', justifyContent: 'center', paddingTop: '20px' }}>
         <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleCookClick}>
-          {loading ? "Cooking!" : "Cook!"}
+          {loading ? (
+            <>
+            "Cooking!"
+            <img src="/assets/loading.png" alt="Loading" width="20" />
+            </>
+          ): (
+            "Cook!"
+          )}
         </div>
       </div>
       </div>
