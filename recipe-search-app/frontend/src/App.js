@@ -10,6 +10,8 @@ function App() {
   const [crave, setCrave] = useState("");
   const [loading, setLoading] = useState(false);
 
+  
+
   const handleCookClick = () => {
     if (loading) return; // Prevent multiple clicks
     setError(null);
