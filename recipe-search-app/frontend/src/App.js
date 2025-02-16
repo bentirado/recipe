@@ -10,6 +10,7 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   const handleCookClick = () => {
+    if (loading) return; // Prevent multiple clicks
     setError(null);
     setRecipe(null);
     setLoading(true);
@@ -32,7 +33,7 @@ function App() {
   };
 
   const handleNewRecipeClick = () => {
-    if (!recipe) return;
+    if (loading || !recipe) return; // Prevent multiple clicks
     setError(null);
     setLoading(true);
 
@@ -56,10 +57,14 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Abuelita's Kitchen</h1>
-      <img src="/assets/Abuelita.png" alt="Abuelita" />
+      <div className="header">
+        <img src="/assets/chef-icon.svg" alt="Chef Icon" width="40" />
+        <h1>Abuelita</h1>
+      </div>
+      <p className="tagline">Let grandmother's wisdom guide your cooking!</p>
       
       <div className="inputBox">
+        <p>What ingredients do you have?</p>
         <textarea
           className="ingredientBox"
           rows="5"
@@ -68,6 +73,7 @@ function App() {
           value={foods}
           onChange={(e) => setFoods(e.target.value)}
         />
+        <p>What would you like to make?</p>
         <textarea
           className="dishBox"
           rows="5"
@@ -78,12 +84,12 @@ function App() {
         />
       </div>
       
-      <button onClick={handleCookClick} disabled={loading}>
+      <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleCookClick}>
         {loading ? "Cooking!" : "Cook!"}
-      </button>
+      </div>
 
       {recipe && (
-        <div>
+        <div className="card">
           <div className="recipeDataBox">
             <h2>{recipe.title}</h2>
             <p>Author: {recipe.author}</p>
@@ -108,9 +114,9 @@ function App() {
               ))}
             </ol>
           </div>
-          <button onClick={handleNewRecipeClick} disabled={loading}>
+          <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleNewRecipeClick}>
             {loading ? "Cooking!" : "Generate New Recipe"}
-          </button>
+          </div>
         </div>
       )}
 

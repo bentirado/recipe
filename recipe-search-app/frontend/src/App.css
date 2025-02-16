@@ -1,23 +1,105 @@
+* {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 .App {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  background-color: #FFEDD5;
 }
 
-img {
-  margin: 15px;
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.header img {
+  margin-right: 10px;
+  margin-top: 35px;
 }
 
 .inputBox {
   margin: 10px;
 }
 
-.ingredientBox {
-  margin-right: 10px;
+.inputBox, .dishBox {
+  width: 80%;
+  max-width: 600px;
 }
 
-.dishBox {
-  margin-left: 10px;
+.inputBox textarea, .dishBox textarea {
+  background-color: #FFF7ED;
+  resize: none;
+  border: #FDBA74 2px solid;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inputBox textarea:hover {
+  border: #FB923C 2px solid;
+}
+
+.button {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #803728;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+  width: 80%;
+  max-width: 560px;
+}
+
+.button.disabled {
+  background-color: #B85C3C;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.card {
+  padding: 20px;
+  margin: 20px;
+  width: 80%;
+  max-width: 600px;
+  text-align: left;
+  background-color: #FFF7ED;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recipeDataBox img {
+  display: block;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: -10px;
+  font-size: 2.5em;
+  color: #803728;
+}
+
+h2, h3 {
+  color: #9A3C1A;
+}
+
+.tagline {
+  color: #C2410C;
+}
+
+p {
+  color: #9A3C1A;
+  font-weight: 500;
+}
+
+a {
+  color: #F97316;
+}
+
+li {
+  color: #7C2D12;
 }
