@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import './App.css';
 import { auth, googleProvider } from "./firebase";
 import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
-import { Link } from "react-router-dom"; // Ensure React Router is set up
+import './App.css';
 
 function App() {
   const [recipe, setRecipe] = useState(null);
@@ -11,9 +10,10 @@ function App() {
   const [foods, setFoods] = useState("");
   const [crave, setCrave] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null); // Track authentication state
+  const [user, setUser] = useState(null); 
+  const [savedRecipes, setSavedRecipes] = useState([]);
+  const [showSavedRecipes, setShowSavedRecipes] = useState(false); // To show/hide the popup
 
-  // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -23,8 +23,7 @@ function App() {
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log("Logged in as:", result.user.displayName);
+      await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error("Login error:", error.message);
       alert("Error logging in. Please try again.");
@@ -34,7 +33,6 @@ function App() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log("User logged out");
     } catch (error) {
       console.error("Logout error:", error.message);
     }
@@ -46,7 +44,8 @@ function App() {
     setRecipe(null);
     setLoading(true);
 
-    axios.post("http://localhost:5000/scrape", { foods, crave })
+    axios
+      .post("http://localhost:5000/scrape", { foods, crave })
       .then((response) => {
         if (response.data && typeof response.data === "object") {
           setRecipe(response.data);
@@ -63,26 +62,18 @@ function App() {
       });
   };
 
-  const handleNewRecipeClick = () => {
-    if (loading || !recipe) return;
-    setError(null);
-    setLoading(true);
+  const handleSaveRecipe = () => {
+    if (recipe) {
+      setSavedRecipes([...savedRecipes, recipe]);
+    }
+  };
 
-    axios.post("http://localhost:5000/scrape", { foods, crave, lastDish: recipe.title })
-      .then((response) => {
-        if (response.data && typeof response.data === "object") {
-          setRecipe(response.data);
-        } else {
-          setError("Invalid data format received from the backend.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setError("Failed to fetch data from the backend.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const handleShowSavedRecipes = () => {
+    setShowSavedRecipes(true); // Show the saved recipes popup
+  };
+
+  const handleCloseSavedRecipes = () => {
+    setShowSavedRecipes(false); // Hide the saved recipes popup
   };
 
   return (
@@ -90,10 +81,9 @@ function App() {
       <div className="header">
         <img src="/assets/chef-icon.svg" alt="Chef Icon" width="40" />
         <h1>Abuelita</h1>
-        {/* Auth Button Logic */}
         {user ? (
           <div className="auth-buttons">
-            <Link to="/saved-recipes" className="button">Saved Recipes</Link>
+            <button className="button" onClick={handleShowSavedRecipes}>Saved Recipes</button>
             <button className="logoutButton" onClick={handleLogout}>Logout</button>
           </div>
         ) : (
@@ -102,7 +92,7 @@ function App() {
       </div>
 
       <p className="tagline">Let grandmother's wisdom guide your cooking!</p>
-      
+
       <div className="inputBox">
         <p>What ingredients do you have?</p>
         <textarea
@@ -123,7 +113,7 @@ function App() {
           onChange={(e) => setCrave(e.target.value)}
         />
       </div>
-      
+
       <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleCookClick}>
         {loading ? "Cooking!" : "Cook!"}
       </div>
@@ -153,14 +143,32 @@ function App() {
                 <li key={index}>{step}</li>
               ))}
             </ol>
-          </div>
-          <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleNewRecipeClick}>
-            {loading ? "Cooking!" : "Generate New Recipe"}
+            <button onClick={handleSaveRecipe} className="button">Save Recipe</button>
           </div>
         </div>
       )}
 
       {error && <p style={{ color: "red" }}>{"Lo siento mijo, but I don't have any recipes for that. Can you try giving me some more details?"}</p>}
+
+      {/* Saved Recipes Popup */}
+      {showSavedRecipes && (
+        <div className="popup">
+          <div className="popupContent">
+            <h2>Saved Recipes</h2>
+            {savedRecipes.length === 0 ? (
+              <p>No saved recipes yet.</p>
+            ) : (
+              savedRecipes.map((saved, index) => (
+                <div key={index} className="savedRecipeCard">
+                  <h3>{saved.title}</h3>
+                  <a href={saved.link} target="_blank" rel="noopener noreferrer">View Recipe</a>
+                </div>
+              ))
+            )}
+            <button onClick={handleCloseSavedRecipes} className="closeButton">Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
