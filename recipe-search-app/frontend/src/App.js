@@ -115,7 +115,14 @@ function App() {
       </div>
 
       <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleCookClick}>
-        {loading ? "Cooking!" : "Cook!"}
+        {loading ? (
+          <>
+            Cooking!
+            <img src="/assets/loading.png" alt="Loading" width="20" />
+          </>
+        ) : (
+          "Cook!"
+        )}
       </div>
 
       {recipe && (
