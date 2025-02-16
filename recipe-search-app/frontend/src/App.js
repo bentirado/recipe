@@ -59,6 +59,29 @@ function App() {
         setLoading(false);
       });
   };
+    const handleNewRecipeClick = () => {
+    if (loading || !recipe) return; // Prevent multiple clicks
+    setError(null);
+    setLoading(true);
+
+    // Pass the current recipe title as lastDish to ask for a different dish
+    axios.post("http://localhost:5000/scrape", { foods, crave, lastDish: recipe.title })
+      .then((response) => {
+        if (response.data && typeof response.data === "object") {
+          setRecipe(response.data);
+        } else {
+          setError("Invalid data format received from the backend.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data from the backend.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
 
   return (
     <div className="App">
@@ -87,7 +110,7 @@ function App() {
           value={foods}
           onChange={(e) => setFoods(e.target.value)}
         />
-        <p>What would you like to make?</p>
+        <p>What are you craving?</p>
         <textarea
           className="dishBox"
           rows="5"
@@ -96,43 +119,53 @@ function App() {
           value={crave}
           onChange={(e) => setCrave(e.target.value)}
         />
+
+      <div className="button-container" style={{ display: 'flex', justifyContent: 'center', paddingTop: '20px' }}>
+        <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleCookClick}>
+          {loading ? "Cooking!" : "Cook!"}
+        </div>
+      </div>
       </div>
 
-      <div className={`button ${loading ? 'disabled' : ''}`} onClick={handleCookClick}>
-        {loading ? "Cooking!" : "Cook!"}
-      </div>
 
       {recipe && (
         <div className="card">
           <div className="recipeDataBox">
             <h2>{recipe.title}</h2>
-            <p>Author: {recipe.author}</p>
-            <a href={recipe.link} target="_blank" rel="noopener noreferrer">
-              View Recipe
+            <p className='author-text'>By: {recipe.author}</p>
+            <a className="recipe-link" href={recipe.link} target="_blank" rel="noopener noreferrer">
+              View Full Recipe
             </a>
-            {recipe.imageUrl && (
-              <div>
-                <img src={recipe.imageUrl} alt={recipe.title} width="300" />
-              </div>
-            )}
+
             <h3>Ingredients:</h3>
             <ul>
               {recipe.ingredients.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
+                <li key={index} className="ingredient-item">{ingredient}</li>
               ))}
             </ul>
-            <h3>Directions:</h3>
+            <h3 style={{ paddingTop: '10px' }}>Directions:</h3>
             <ol>
               {recipe.directions.map((step, index) => (
-                <li key={index}>{step}</li>
+                <li key={index} className="direction-item">{step}</li>
               ))}
             </ol>
+            <div className="button-container" style={{ display: 'flex', justifyContent: 'center', paddingTop: '20px', paddingRight: '20px' }}>
+              <div className={`button pastel-orange ${loading ? 'disabled' : ''}`} onClick={handleNewRecipeClick}>
+                {loading ? "Cooking!" : "Generate New Recipe"}
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      {error && <p style={{ color: "red" }}>{"Lo siento mijo, but I don't have any recipes for that. Can you try giving me some more details?"}</p>}
+      {error && <p style={{ color: "black" }}>{"Lo siento mijo, but I don't have any recipes for that. Can you try giving me some more details?"}</p>}
+
+      <footer style={{ textAlign: 'center', padding: '20px'}}>
+        <p style={{}}>&copy; Made for 2025 Hacklahoma</p>
+        <img src="/assets/Abuelita.png" alt="Abuelita" style={{ width: '80px', marginLeft: '10px' }} />
+      </footer>
     </div>
+    
   );
 }
 

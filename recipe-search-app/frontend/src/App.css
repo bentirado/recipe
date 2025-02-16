@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #FFEDD5;
+  background: linear-gradient(to bottom, #f7efe5, #fbd6b1);
 }
 
 .header {
@@ -23,6 +23,12 @@
 
 .inputBox {
   margin: 10px;
+  background-color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .inputBox, .dishBox {
@@ -31,21 +37,28 @@
 }
 
 .inputBox textarea, .dishBox textarea {
-  background-color: #FFF7ED;
+  background-color: white;
   resize: none;
   border: #FDBA74 2px solid;
   width: 100%;
   box-sizing: border-box;
+  border-radius: 10px;
+  padding-top: 10px;
+  padding-left: 10px;
 }
 
 .inputBox textarea:hover {
   border: #FB923C 2px solid;
 }
 
+.inputBox:focus {
+  border: black 2px solid;
+}
+
 .button {
   margin: 10px;
   padding: 10px 20px;
-  background-color: #803728;
+  background-color: #f69547;
   color: white;
   border: none;
   border-radius: 5px;
@@ -54,6 +67,12 @@
   display: inline-block;
   width: 80%;
   max-width: 560px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+  background-color: #d68a3c;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .button.disabled {
@@ -68,13 +87,16 @@
   width: 80%;
   max-width: 600px;
   text-align: left;
-  background-color: #FFF7ED;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
 }
 
 .card .button
 {
   margin-left: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
 }
 
 .recipeDataBox img {
@@ -82,11 +104,15 @@
   margin: 0 auto;
 }
 
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif;
+  color: #9A3C1A;
+}
+
 h1 {
   margin-bottom: -10px;
   font-size: 2.5em;
-  color: #803728;
-  margin-right:25px;
+  margin-right: 25px;
 }
 
 h2, h3 {
@@ -97,17 +123,15 @@ h2, h3 {
   color: #C2410C;
 }
 
-p {
-  color: #9A3C1A;
+p, li {
+  font-family: 'Inter', sans-serif; /* Updated to use the Inter font for paragraphs and list items */
+  color: #9A3C1A; /* Retaining existing color for paragraphs and list items */
   font-weight: 500;
 }
 
 a {
+  font-family: 'Inter', sans-serif;
   color: #F97316;
-}
-
-li {
-  color: #7C2D12;
 }
 
 /* Popup */
@@ -137,7 +161,7 @@ li {
   border: 1px solid #ccc;
   padding: 10px;
   margin: 10px 0;
-  border-radius: 5px;
+  border-radius: 20px;
 }
 
 .closeButton {
@@ -148,3 +172,46 @@ li {
   cursor: pointer;
   border-radius: 5px;
 }
+
+/* Add this to your App.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap');
+
+.ingredient-item {
+  font-family: 'Inter', sans-serif; /* Updated to use the Inter font */
+  list-style-type: none; /* Remove default bullets */
+  position: relative; /* Positioning for custom bullet */
+  margin-bottom: 10px; /* Add space between ingredients */
+}
+
+.ingredient-item::before {
+  content: "•"; /* Custom bullet */
+  color: #FFA500; /* Soft orange color */
+  position: absolute; /* Positioning */
+  left: -1em; /* Adjust as needed */
+  font-size: 1.5em; /* Increase bullet size */
+}
+
+.direction-item {
+  font-family: 'Inter', sans-serif; /* Updated to use the Inter font */
+  position: relative;
+  padding-left: 30px; /* Adjust padding to make space for the circle */
+  padding-right:20px;
+  margin-bottom: 10px; /* Add padding between items */
+}
+
+.direction-item::marker {
+  color: #d69620; /* Change this to your desired color */
+}
+
+.author-text {
+  font-family: 'Inter', sans-serif; /* Updated to use the Inter font */
+  color: #c24921; 
+}
+
+/* Add this to your App.css */
+.pastel-orange {
+    background-color: #ffcc99; /* Pastel orange color */
+    color: #783d21; /* Slightly lighter than the header color */
+} 
+
