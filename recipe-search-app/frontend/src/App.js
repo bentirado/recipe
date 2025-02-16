@@ -151,10 +151,11 @@ function App() {
       {error && <p style={{ color: "red" }}>{"Lo siento mijo, but I don't have any recipes for that. Can you try giving me some more details?"}</p>}
 
       {/* Saved Recipes Popup */}
-      {showSavedRecipes && (
+      {showSavedRecipes && user && (
         <div className="popup">
           <div className="popupContent">
             <h2>Saved Recipes</h2>
+            <p>User ID: {user.uid}</p> {/* Display the user ID */}
             {savedRecipes.length === 0 ? (
               <p>No saved recipes yet.</p>
             ) : (
