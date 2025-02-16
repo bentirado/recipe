@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import './App.css';
+import firebase from './firebase';  // Import Firebase initialization
 
 function App() {
   const [recipe, setRecipe] = useState(null);
