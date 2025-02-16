@@ -176,6 +176,7 @@ function App() {
           </div>
         </div>
       )}
+      <p>Made by Benjamin Tirado and Javid Pena for Hacklahoma '25</p>
     </div>
   );
 }
